@@ -1,25 +1,46 @@
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
+import {createDashboard} from './core/dashboard';
+import {createSensorMock} from './core/sensor-mock';
+import {Dashboard} from './components/dashboard.component';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const temperatureSensor$ = createSensorMock({
+  minDelay: 100,
+  maxDelay: 2000,
+  minValue: 20,
+  maxValue: 30,
+});
+
+const humiditySensor$ = createSensorMock({
+  minDelay: 100,
+  maxDelay: 2000,
+  minValue: 80,
+  maxValue: 90,
+});
+
+const pressureSensor$ = createSensorMock({
+  minDelay: 100,
+  maxDelay: 2000,
+  minValue: 80,
+  maxValue: 90,
+});
+
+const dashboard$ = createDashboard(temperatureSensor$, humiditySensor$,
+    pressureSensor$)
+    .map(([temperature, humidity, pressure]) => ({
+      temperature,
+      humidity,
+      pressure,
+    }));
+
+class App extends Component {
+  render() {
+    return (
+        <div className="App">
+          <Dashboard dashboard$={dashboard$}/>
+        </div>
+    );
+  }
 }
 
 export default App;
